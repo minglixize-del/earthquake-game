@@ -119,7 +119,7 @@ document.getElementById("message").innerHTML=
 dangerShelter.name+
 "へ向かう道路が通行止めになりました！<br><br>"+
 "安全な避難所をクリックしてください。";
-
+recommendShelter();
 }
 // -----------------------
 // 避難所を選ぶ
@@ -142,7 +142,26 @@ if(life <= 0){
 alert("ゲームオーバー！");
 restartGame();
 }
+// -----------------------
+// AIおすすめ避難所
+// -----------------------
 
+function recommendShelter(){
+
+let candidates = shelters.filter(s => s.name !== dangerShelter.name);
+
+let recommendation = candidates[0];
+
+document.getElementById("message").innerHTML +=
+"<hr>" +
+"🤖 <b>AIおすすめ避難所</b><br>" +
+recommendation.name +
+"<br><br>" +
+"理由<br>" +
+"・通行止めを回避できます。<br>" +
+"・安全に避難できる可能性が高いです。";
+
+}
 }else{
 
 score += 100;
