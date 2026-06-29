@@ -1,100 +1,123 @@
-// ===== 地図 =====
-const map = L.map('map').setView([36.36, 138.33], 13);
+// =========================
+// 東御市 防災チャレンジ Ver.2
+// 前半
+// =========================
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-attribution: '© OpenStreetMap'
+// 東御市中心
+const map = L.map('map').setView([36.359, 138.330], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'© OpenStreetMap'
 }).addTo(map);
 
-// ===== 状態 =====
-let started = false;
-let earthquakeStarted = false;
+// -----------------------
+// ゲームデータ
+// -----------------------
+
+let homeMarker = null;
 let life = 3;
+let score = 0;
+let gameStarted = false;
+let dangerShelter = null;
 
-// ライフ表示
-const lifeBox = document.createElement("h2");
-lifeBox.innerHTML = "❤️❤️❤️";
-document.body.insertBefore(lifeBox, document.getElementById("map"));
+// -----------------------
+// 避難所
+// （あとで本物の座標に変更）
+// -----------------------
 
-function updateLife() {
-lifeBox.innerHTML = "❤️".repeat(life) + "🤍".repeat(3 - life);
+const shelters = [
 
-if (life <= 0) {
-alert("💀 ゲームオーバー！");
-location.reload();
-}
-}
+{
+name:"田中小学校",
+lat:36.360,
+lng:138.327
+},
 
-function miss(message) {
-life--;
-updateLife();
-alert(message);
-}
+{
+name:"和小学校",
+lat:36.350,
+lng:138.340
+},
 
-// ===== 家 =====
-const home = L.marker([36.36, 138.33]).addTo(map);
-home.bindPopup("🏠 あなたの家");
+{
+name:"東部中学校",
+lat:36.366,
+lng:138.347
+},
 
-home.on("click", function () {
-if (started) return;
-
-started = true;
-alert("🏃 避難開始！『🚨地震発生』を押してください。");
-});
-
-// ===== 避難所 =====
-const shelter = L.marker([36.37, 138.34]).addTo(map);
-shelter.bindPopup("🏫 避難所");
-
-shelter.on("click", function () {
-
-if (!started) {
-miss("🏠 まず家をクリックしてください！");
-return;
+{
+name:"北御牧中学校",
+lat:36.382,
+lng:138.308
 }
 
-if (!earthquakeStarted) {
-miss("🚨 地震がまだ発生していません！");
-return;
-}
-
-alert("🎉 避難成功！！");
-});
-
-// ===== ルート =====
-let route = L.polyline([
-[36.36,138.33],
-[36.37,138.34]
-],{
-color:"blue",
-weight:5
-}).addTo(map);
-
-// ===== 地震 =====
-function earthquake(){
-
-if(!started){
-miss("🏠 まず家をクリックしてください！");
-return;
-}
-
-if(earthquakeStarted){
-return;
-}
-
-earthquakeStarted=true;
-
-route.setStyle({
-color:"red",
-dashArray:"10"
-});
-
-const events=[
-"🌉 橋が崩落しました！",
-"🚧 道路が通行止めになりました！",
-"⛰️ 土砂崩れが発生しました！"
 ];
 
-const event=events[Math.floor(Math.random()*events.length)];
+// -----------------------
+// 避難所を表示
+// -----------------------
 
-alert(event+"\n別ルートを考えてください！");
+shelters.forEach(shelter=>{
+
+const marker=L.marker([shelter.lat,shelter.lng]).addTo(map);
+
+marker.bindPopup("🏫 "+shelter.name);
+
+marker.on("click",function(){
+
+if(!gameStarted){
+
+alert("まず地震を発生させてください！");
+
+return;
+
+}
+
+chooseShelter(shelter);
+
+});
+
+});
+
+// -----------------------
+// 家を置く
+// -----------------------
+
+map.on("click",function(e){
+
+if(homeMarker){
+
+map.removeLayer(homeMarker);
+
+}
+
+homeMarker=L.marker(e.latlng).addTo(map);
+
+homeMarker.bindPopup("🏠 あなたの家").openPopup();
+
+document.getElementById("status").innerHTML="🏠 自宅を設定しました！";
+
+document.getElementById("earthquakeBtn").disabled=false;
+
+});
+
+// -----------------------
+// 地震発生
+// -----------------------
+
+function earthquake(){
+
+gameStarted=true;
+
+const random=Math.floor(Math.random()*shelters.length);
+
+dangerShelter=shelters[random];
+
+document.getElementById("message").innerHTML=
+
+"🚨 地震発生！<br><br>"+
+dangerShelter.name+
+"へ向かう道路が通行止めになりました！<br><br>"+
+"安全な避難所をクリックしてください。";
+
 }
