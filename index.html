@@ -2,21 +2,49 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>東御市 地震避難ゲーム</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東御市 防災チャレンジ</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🏠 東御市 地震避難ゲーム</h1>
+<header>
+<h1>🏠 東御市 防災チャレンジ</h1>
+<p>自宅を設定し、安全な避難所を選ぼう！</p>
+</header>
+
+<div id="status">
+📍 地図をクリックして、自宅を設定してください。
+</div>
+
+<div id="info">
+❤️ ライフ：
+<span id="life">3</span>
+
+&nbsp;&nbsp;&nbsp;
+
+⭐ スコア：
+<span id="score">0</span>
+</div>
 
 <div id="map"></div>
 
-<button onclick="earthquake()">
+<div id="buttons">
+
+<button id="earthquakeBtn" onclick="earthquake()" disabled>
 🚨 地震発生
 </button>
+
+<button onclick="restartGame()">
+🔄 最初から
+</button>
+
+</div>
+
+<div id="message"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>
