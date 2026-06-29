@@ -121,3 +121,74 @@ dangerShelter.name+
 "安全な避難所をクリックしてください。";
 
 }
+// -----------------------
+// 避難所を選ぶ
+// -----------------------
+
+function chooseShelter(shelter){
+
+if(shelter.name === dangerShelter.name){
+
+life--;
+
+document.getElementById("life").textContent = life;
+
+document.getElementById("message").innerHTML =
+"❌ " + shelter.name + "へ向かう道路は通行止めでした！<br><br>" +
+"ライフが1減りました。";
+
+if(life <= 0){
+
+alert("ゲームオーバー！");
+restartGame();
+}
+
+}else{
+
+score += 100;
+
+document.getElementById("score").textContent = score;
+
+document.getElementById("message").innerHTML =
+"🎉 避難成功！<br><br>" +
+shelter.name +
+"へ安全に避難できました！<br><br>" +
+"💡 防災アドバイス：災害時は最寄りではなく、安全な避難所を選ぶことも大切です。";
+
+gameStarted = false;
+
+}
+
+}
+
+// -----------------------
+// リスタート
+// -----------------------
+
+function restartGame(){
+
+life = 3;
+score = 0;
+
+gameStarted = false;
+
+dangerShelter = null;
+
+document.getElementById("life").textContent = life;
+document.getElementById("score").textContent = score;
+
+document.getElementById("message").innerHTML = "";
+
+document.getElementById("status").innerHTML =
+"📍 地図をクリックして、自宅を設定してください。";
+
+document.getElementById("earthquakeBtn").disabled = true;
+
+if(homeMarker){
+
+map.removeLayer(homeMarker);
+homeMarker = null;
+
+}
+
+}
