@@ -19,7 +19,7 @@ let life = 3;
 let score = 0;
 let gameStarted = false;
 let dangerShelter = null;
-
+let roadBlock = null;
 // -----------------------
 // 避難所
 // （あとで本物の座標に変更）
@@ -115,12 +115,29 @@ dangerShelter=shelters[random];
 
 document.getElementById("message").innerHTML=
 
-"🚨 地震発生！<br><br>"+
-dangerShelter.name+
-"へ向かう道路が通行止めになりました！<br><br>"+
-"安全な避難所をクリックしてください。";
+document.getElementById("message").innerHTML =
+"🚨 地震発生！<br><br>" +
+"道路の一部が通行止めになりました。<br><br>" +
+"地図を確認し、安全な避難所を選択してください。";
 
 recommendShelter();
+
+// 古い通行止めを消す
+if (roadBlock) {
+map.removeLayer(roadBlock);
+}
+
+// ランダムな赤い通行止め
+roadBlock = L.polyline(
+[
+[36.3575,138.3330],
+[36.3605,138.3385]
+],
+{
+color:"red",
+weight:7
+}
+).addTo(map);
 }
 // -----------------------
 // 避難所を選ぶ
