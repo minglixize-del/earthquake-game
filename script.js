@@ -19,7 +19,7 @@ let life = 3;
 let score = 0;
 let gameStarted = false;
 let dangerShelter = null;
-let roadBlock = null;
+let roadBlocks = [];
 // -----------------------
 // 避難所
 // （あとで本物の座標に変更）
@@ -50,6 +50,28 @@ name:"東御市ふれあい体育館",
 lat:36.324,
 lng:138.340
 }
+
+];
+
+const roadPatterns = [
+
+// パターン1
+[
+[[36.3590,138.3270],[36.3605,138.3300]],
+[[36.3565,138.3340],[36.3585,138.3370]]
+],
+
+// パターン2
+[
+[[36.3615,138.3235],[36.3635,138.3275]],
+[[36.3545,138.3395],[36.3575,138.3425]]
+],
+
+// パターン3
+[
+[[36.3600,138.3360],[36.3625,138.3395]],
+[[36.3560,138.3265],[36.3580,138.3290]]
+]
 
 ];
 
@@ -120,22 +142,22 @@ document.getElementById("message").innerHTML =
 "道路の一部が通行止めになりました。<br><br>" +
 "地図を確認し、安全な避難所を選択してください。";
 
-// 古い通行止めを消す
-if (roadBlock) {
-map.removeLayer(roadBlock);
-}
+roadBlocks.forEach(block => map.removeLayer(block));
+roadBlocks = [];
 
-// ランダムな赤い通行止め
-roadBlock = L.polyline(
-[
-[36.3575,138.3330],
-[36.3605,138.3385]
-],
-{
+const pattern =
+roadPatterns[Math.floor(Math.random()*roadPatterns.length)];
+
+pattern.forEach(line=>{
+
+const block = L.polyline(line,{
 color:"red",
 weight:7
-}
-).addTo(map);
+}).addTo(map);
+
+roadBlocks.push(block);
+
+});
 }
 // -----------------------
 // 避難所を選ぶ
