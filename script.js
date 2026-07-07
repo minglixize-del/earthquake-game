@@ -120,8 +120,6 @@ document.getElementById("message").innerHTML =
 "道路の一部が通行止めになりました。<br><br>" +
 "地図を確認し、安全な避難所を選択してください。";
 
-recommendShelter();
-
 // 古い通行止めを消す
 if (roadBlock) {
 map.removeLayer(roadBlock);
