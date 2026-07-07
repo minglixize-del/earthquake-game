@@ -20,6 +20,7 @@ let score = 0;
 let gameStarted = false;
 let dangerShelter = null;
 let roadBlocks = [];
+let currentPattern = null;
 // -----------------------
 // 避難所
 // （あとで本物の座標に変更）
@@ -55,23 +56,29 @@ lng:138.340
 
 const roadPatterns = [
 
-// パターン1
-[
+{
+blockedShelter:"田中小学校",
+lines:[
 [[36.3590,138.3270],[36.3605,138.3300]],
 [[36.3565,138.3340],[36.3585,138.3370]]
-],
+]
+},
 
-// パターン2
-[
+{
+blockedShelter:"東部中学校",
+lines:[
 [[36.3615,138.3235],[36.3635,138.3275]],
 [[36.3545,138.3395],[36.3575,138.3425]]
-],
+]
+},
 
-// パターン3
-[
+{
+blockedShelter:"東御市ふれあい体育館",
+lines:[
 [[36.3600,138.3360],[36.3625,138.3395]],
 [[36.3560,138.3265],[36.3580,138.3290]]
 ]
+}
 
 ];
 
@@ -145,10 +152,10 @@ document.getElementById("message").innerHTML =
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
 
-const pattern =
+currentPattern =
 roadPatterns[Math.floor(Math.random()*roadPatterns.length)];
 
-pattern.forEach(line=>{
+currentPattern.lines.forEach(line=>{
 
 const block = L.polyline(line,{
 color:"red",
