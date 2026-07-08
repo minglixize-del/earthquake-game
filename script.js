@@ -20,6 +20,7 @@ let score = 0;
 let gameStarted = false;
 
 let roadBlocks = [];
+let roadBlockMarkers = [];
 let blockedShelters = [];
 let nearestShelter = null;
 // -----------------------
@@ -181,6 +182,80 @@ document.getElementById("message").innerHTML =
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
 
+roadBlockMarkers.forEach(marker => map.removeLayer(marker));
+roadBlockMarkers = [];
+
+function drawRoadBlock(home, shelter){
+
+// 家→避難所の向き
+const dx = shelter.lng - home.lng;
+const dy = shelter.lat - home.lat;
+
+// 距離
+const length = Math.sqrt(dx * dx + dy * dy);
+
+// 長さが0なら終了
+if(length === 0) return;
+
+// 家から何％の位置に置くか
+let ratio = 0.25;
+
+// 約100m（緯度経度の近似）
+const maxDistance = 0.0009;
+
+// 25%地点が100mより遠いなら100m地点にする
+if(length * ratio > maxDistance){
+ratio = maxDistance / length;
+}
+
+// 通行止めを置く位置
+const blockLat = home.lat + dy * ratio;
+const blockLng = home.lng + dx * ratio;
+
+// ルートと垂直方向のベクトル
+const px = -dy / length;
+const py = dx / length;
+
+// 赤線の長さ
+const size = 0.0006;
+
+// 赤線の両端
+const p1 = [
+blockLat + py * size,
+blockLng + px * size
+];
+
+const p2 = [
+blockLat - py * size,
+blockLng - px * size
+];
+
+const block = L.polyline(
+[p1, p2],
+{
+color: "red",
+weight: 7
+}
+).addTo(map);
+
+roadBlocks.push(block);
+
+const icon = L.divIcon({
+className: "road-block-icon",
+html: "🚧",
+iconSize: [24, 24],
+iconAnchor: [12, 12]
+});
+
+const marker = L.marker(
+[blockLat, blockLng],
+{ icon: icon }
+).addTo(map);
+
+roadBlockMarkers.push(marker);
+
+}
+
 // 通行止め避難所をリセット
 blockedShelters = [];
 
@@ -333,6 +408,9 @@ document.getElementById("earthquakeBtn").disabled = true;
 
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
+
+roadBlockMarkers.forEach(marker => map.removeLayer(marker));
+roadBlockMarkers = [];
 
 if(homeMarker){
 map.removeLayer(homeMarker);
