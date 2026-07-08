@@ -156,7 +156,7 @@ map.removeLayer(homeMarker);
 homeMarker = L.marker(e.latlng).addTo(map);
 
 const home = e.latlng;
-// loadRoadData(home);
+ loadRoadData(home);
 
 homeMarker.bindPopup("🏠 あなたの家").openPopup();
 
@@ -221,7 +221,8 @@ console.log("一番近い避難所:", nearestShelter.name);
 
 function earthquake(){
 
-   console.log("earthquake開始") 
+console.log("earthquake開始");
+
 
 // 家が設定されているか確認
 if(homeMarker == null){
@@ -248,96 +249,50 @@ roadBlockMarkers.forEach(marker => map.removeLayer(marker));
 roadBlockMarkers = [];
 
 
-// 家→避難所の向き
-const dx = shelter.lng - home.lng;
-const dy = shelter.lat - home.lat;
+// 今までの通行止め避難所をリセット
+blockedShelters = [];
 
 
-// 距離
-const length = Math.sqrt(dx * dx + dy * dy);
+// 一番近い避難所は必ず通行止め
+blockedShelters.push(nearestShelter.name);
 
 
-// 長さが0なら終了
-if(length === 0) return;
+console.log("nearestShelter:", nearestShelter);
 
 
-// 家から約150m地点に通行止めを置く
-const distanceFromHome = 0.015;
+// 残り3つからランダムで1つ選ぶ
+const others = shelters.filter(
+shelter => shelter.name !== nearestShelter.name
+);
 
 
-let ratio = distanceFromHome / length;
+const randomShelter =
+others[Math.floor(Math.random() * others.length)];
 
 
-// 避難所より先には置かない
-if(ratio > 1){
-ratio = 1;
-}
+blockedShelters.push(randomShelter.name);
 
 
-// 通行止めを置く位置
-const blockLat = home.lat + dy * ratio;
-const blockLng = home.lng + dx * ratio;
+
+// 家の位置
+const home = homeMarker.getLatLng();
 
 
-// ルートと垂直方向のベクトル
-const px = -dy / length;
-const py = dx / length;
 
-
-// 赤線の長さ
-const size = 0.0015;
-
-
-// 赤線の両端
-const p1 = [
-blockLat + py * size,
-blockLng + px * size
-];
-
-
-const p2 = [
-blockLat - py * size,
-blockLng - px * size
-];
-
-
-const block = L.polyline(
-[p1, p2],
-{
-color: "red",
-weight: 7
-}
-).addTo(map);
-
-
-roadBlocks.push(block);
-
-
-const icon = L.divIcon({
-className: "road-block-icon",
-html: "🚧",
-iconSize: [24, 24],
-iconAnchor: [12, 12]
-});
-
-
-const marker = L.marker(
-[blockLat, blockLng],
-{ icon: icon }
-).addTo(map);
-
-
-roadBlockMarkers.push(marker);
-
+// 通行止めを描画
 blockedShelters.forEach(name => {
+
 
 const shelter = shelters.find(
 s => s.name === name
 );
 
+
 drawRoadBlock(home, shelter);
 
+
 });
+
 
 }
 
