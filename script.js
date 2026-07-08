@@ -164,47 +164,98 @@ console.log("一番近い避難所:", nearestShelter.name);
 
 function earthquake(){
 
+// 家が設定されているか確認
+if(homeMarker == null){
+alert("先に自宅を設定してください！");
+return;
+}
+
 gameStarted = true;
 
 document.getElementById("message").innerHTML =
 "🚨 地震発生！<br><br>" +
 "道路の一部が通行止めになりました。<br><br>" +
-"地図を確認し、安全な避難所を選択してください。";
+"地図を見て、安全な避難所を選んでください。";
 
-// 通行止めをリセット
+// 今までの通行止めを消す
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
+
+// 通行止め避難所をリセット
 blockedShelters = [];
 
-// 一番近い避難所を必ず通行止め
+// 一番近い避難所は必ず通行止め
 blockedShelters.push(nearestShelter.name);
 
-// 残り3つの避難所
-const others = shelters.filter(s => s.name !== nearestShelter.name);
+// 残り3つからランダムで1つ選ぶ
+const others = shelters.filter(
+shelter => shelter.name !== nearestShelter.name
+);
 
-// その中から1つランダム
-const randomShelter = others[Math.floor(Math.random() * others.length)];
+const randomShelter =
+others[Math.floor(Math.random() * others.length)];
 
 blockedShelters.push(randomShelter.name);
 
-roadPatterns.forEach(pattern => {
+// 家の位置
+const home = homeMarker.getLatLng();
 
-if (blockedShelters.includes(pattern.blockedShelter)) {
+// 通行止めを描画
+blockedShelters.forEach(name => {
 
-pattern.lines.forEach(line => {
+const shelter = shelters.find(
+s => s.name === name
+);
 
-const block = L.polyline(line, {
+drawRoadBlock(home, shelter);
+
+});
+
+};
+
+function drawRoadBlock(home, shelter){
+
+// 家と避難所の中間地点
+const midLat = (home.lat + shelter.lat) / 2;
+const midLng = (home.lng + shelter.lng) / 2;
+
+// 家→避難所の向き
+const dx = shelter.lng - home.lng;
+const dy = shelter.lat - home.lat;
+
+// 長さ
+const length = Math.sqrt(dx * dx + dy * dy);
+
+// 長さが0なら終了
+if(length === 0) return;
+
+// ルートと垂直方向のベクトル
+const px = -dy / length;
+const py = dx / length;
+
+// 赤線の長さ（あとで調整できる）
+const size = 0.0006;
+
+// 赤線の両端
+const p1 = [
+midLat + py * size,
+midLng + px * size
+];
+
+const p2 = [
+midLat - py * size,
+midLng - px * size
+];
+
+const block = L.polyline(
+[p1, p2],
+{
 color: "red",
 weight: 7
-}).addTo(map);
+}
+).addTo(map);
 
 roadBlocks.push(block);
-
-});
-
-}
-
-});
 
 }
 
