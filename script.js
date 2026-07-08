@@ -153,7 +153,7 @@ roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
 
 currentPattern =
-roadPatterns[Math.floor(Math.random()*roadPatterns.length)];
+    roadPatterns[Math.floor(Math.random()*roadPatterns.length)];
 
 currentPattern.lines.forEach(line=>{
 
@@ -173,31 +173,31 @@ function chooseShelter(shelter){
 
 if(shelter.name === currentPattern.blockedShelter){
 
-life--;
-document.getElementById("life").textContent = life;
+    life--;
+    document.getElementById("life").textContent = life;
 
-document.getElementById("message").innerHTML =
-"❌ この避難経路は通行止めでした！<br><br>" +
-"別の避難所を探してください。<br><br>" +
-"ライフが1減りました。";
+    document.getElementById("message").innerHTML =
+    "❌ この避難経路は通行止めでした！<br><br>" +
+    "別の避難所を探してください。<br><br>" +
+    "ライフが1減りました。";
 
-if(life <= 0){
-alert("ゲームオーバー！");
-restartGame();
-}
+        if(life <= 0){
+        alert("ゲームオーバー！");
+        restartGame();
+    }
 
 } else {
 
-score += 100;
-document.getElementById("score").textContent = score;
+    score += 100;
+    document.getElementById("score").textContent = score;
 
-document.getElementById("message").innerHTML =
-"🎉 避難成功！<br><br>" +
-shelter.name +
-"へ安全に避難できました！<br><br>" +
-"💡 防災アドバイス：災害時は最寄りではなく、道路状況も確認して避難しましょう。";
+    document.getElementById("message").innerHTML =
+    "🎉 避難成功！<br><br>" +
+    shelter.name +
+    "へ安全に避難できました！<br><br>" +
+    "💡 防災アドバイス：災害時は最寄りではなく、道路状況も確認して避難しましょう。";
 
-gameStarted = false;
+    gameStarted = false;
 }
 }
 
@@ -232,6 +232,9 @@ document.getElementById("score").textContent = score;
 document.getElementById("message").innerHTML = "";
 document.getElementById("status").innerHTML = "📍 地図をクリックして、自宅を設定してください。";
 document.getElementById("earthquakeBtn").disabled = true;
+
+roadBlocks.forEach(block => map.removeLayer(block));
+roadBlocks = [];
 
 if(homeMarker){
 map.removeLayer(homeMarker);
