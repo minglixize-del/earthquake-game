@@ -164,42 +164,56 @@ console.log("一番近い避難所:", nearestShelter.name);
 
 function earthquake(){
 
-gameStarted=true;
-
-const random=Math.floor(Math.random()*shelters.length);
-
-dangerShelter=shelters[random];
-
-document.getElementById("message").innerHTML=
+gameStarted = true;
 
 document.getElementById("message").innerHTML =
 "🚨 地震発生！<br><br>" +
 "道路の一部が通行止めになりました。<br><br>" +
 "地図を確認し、安全な避難所を選択してください。";
 
+// 通行止めをリセット
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
+blockedShelters = [];
 
-currentPattern =
-    roadPatterns[Math.floor(Math.random()*roadPatterns.length)];
+// 一番近い避難所を必ず通行止め
+blockedShelters.push(nearestShelter.name);
 
-currentPattern.lines.forEach(line=>{
+// 残り3つの避難所
+const others = shelters.filter(s => s.name !== nearestShelter.name);
 
-const block = L.polyline(line,{
-color:"red",
-weight:7
+// その中から1つランダム
+const randomShelter = others[Math.floor(Math.random() * others.length)];
+
+blockedShelters.push(randomShelter.name);
+
+roadPatterns.forEach(pattern => {
+
+if (blockedShelters.includes(pattern.blockedShelter)) {
+
+pattern.lines.forEach(line => {
+
+const block = L.polyline(line, {
+color: "red",
+weight: 7
 }).addTo(map);
 
 roadBlocks.push(block);
 
 });
+
 }
+
+});
+
+}
+
 // -----------------------
 // 避難所を選ぶ
 // -----------------------
 function chooseShelter(shelter){
 
-if(shelter.name === currentPattern.blockedShelter){
+if(blockedShelters.includes(shelter.name)){
 
     life--;
     document.getElementById("life").textContent = life;
