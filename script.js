@@ -198,10 +198,10 @@ const length = Math.sqrt(dx * dx + dy * dy);
 if(length === 0) return;
 
 // 家から何％の位置に置くか
-let ratio = 0.25;
+let ratio = 0.45;
 
 // 約100m（緯度経度の近似）
-const maxDistance = 0.0009;
+const maxDistance = 0.0015;
 
 // 25%地点が100mより遠いなら100m地点にする
 if(length * ratio > maxDistance){
