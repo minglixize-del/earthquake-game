@@ -198,7 +198,7 @@ const length = Math.sqrt(dx * dx + dy * dy);
 if(length === 0) return;
 
 // 家から約150m地点に通行止めを置く
-const distanceFromHome = 0.30;
+const distanceFromHome = 0.030;
 
 let ratio = distanceFromHome / length;
 
