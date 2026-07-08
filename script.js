@@ -221,6 +221,7 @@ console.log("一番近い避難所:", nearestShelter.name);
 
 function earthquake(){
 
+   console.log("earthquake開始") 
 
 // 家が設定されているか確認
 if(homeMarker == null){
