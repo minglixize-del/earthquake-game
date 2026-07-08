@@ -354,6 +354,7 @@ blockedShelters = [];
 // 一番近い避難所は必ず通行止め
 blockedShelters.push(nearestShelter.name);
 
+console.log("nearestShelter:", nearestShelter);
 
 // 残り3つからランダムで1つ選ぶ
 const others = shelters.filter(
@@ -372,7 +373,7 @@ blockedShelters.push(randomShelter.name);
 const home = homeMarker.getLatLng();
 
 
-loadRoadData(home);
+// loadRoadData(home);
 // 通行止めを描画
 blockedShelters.forEach(name => {
 
