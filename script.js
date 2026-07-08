@@ -201,7 +201,7 @@ if(length === 0) return;
 let ratio = 0.45;
 
 // 約100m（緯度経度の近似）
-const maxDistance = 0.0015;
+const maxDistance = 0.015;
 
 // 25%地点が100mより遠いなら100m地点にする
 if(length * ratio > maxDistance){
