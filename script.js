@@ -156,7 +156,7 @@ map.removeLayer(homeMarker);
 homeMarker = L.marker(e.latlng).addTo(map);
 
 const home = e.latlng;
- loadRoadData(home);
+loadRoadData(home);
 
 homeMarker.bindPopup("🏠 あなたの家").openPopup();
 
@@ -295,57 +295,6 @@ drawRoadBlock(home, shelter);
 
 
 }
-
-
-// -----------------------
-// 道路データ取得
-// -----------------------
-
-
-
-// 通行止め避難所をリセット
-blockedShelters = [];
-
-
-// 一番近い避難所は必ず通行止め
-blockedShelters.push(nearestShelter.name);
-
-console.log("nearestShelter:", nearestShelter);
-
-// 残り3つからランダムで1つ選ぶ
-const others = shelters.filter(
-shelter => shelter.name !== nearestShelter.name
-);
-
-
-const randomShelter =
-others[Math.floor(Math.random() * others.length)];
-
-
-blockedShelters.push(randomShelter.name);
-
-
-// 家の位置
-const home = homeMarker.getLatLng();
-
-
-// loadRoadData(home);
-// 通行止めを描画
-blockedShelters.forEach(name => {
-
-
-const shelter = shelters.find(
-s => s.name === name
-);
-
-
-drawRoadBlock(home, shelter);
-
-
-});
-
-
-;
 
 function drawRoadBlock(home, shelter){
 
