@@ -287,6 +287,61 @@ const shelter = shelters.find(
 s => s.name === name
 );
 
+// -----------------------
+// 道路データ取得
+// -----------------------
+
+function loadRoadData(home){
+
+const radius = 500;
+
+const query = `
+[out:json];
+(
+way["highway"](around:${radius},${home.lat},${home.lng});
+);
+out geom;
+`;
+
+
+fetch(
+"https://overpass-api.de/api/interpreter",
+{
+method:"POST",
+body: query
+}
+)
+.then(response => response.json())
+.then(data => {
+
+data.elements.forEach(road => {
+
+if(!road.geometry) return;
+
+
+const points = road.geometry.map(point => [
+point.lat,
+point.lon
+]);
+
+
+const line = L.polyline(
+points,
+{
+color:"blue",
+weight:3
+}
+).addTo(map);
+
+
+roadLines.push(line);
+
+});
+
+});
+
+}
+
 
 drawRoadBlock(home, shelter);
 
