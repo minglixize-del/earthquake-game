@@ -197,15 +197,14 @@ const length = Math.sqrt(dx * dx + dy * dy);
 // 長さが0なら終了
 if(length === 0) return;
 
-// 家から何％の位置に置くか
-let ratio = 0.45;
+// 家から約150m地点に通行止めを置く
+const distanceFromHome = 0.0015;
 
-// 約100m（緯度経度の近似）
-const maxDistance = 0.015;
+let ratio = distanceFromHome / length;
 
-// 25%地点が100mより遠いなら100m地点にする
-if(length * ratio > maxDistance){
-ratio = maxDistance / length;
+// 避難所より先には置かない
+if(ratio > 1){
+ratio = 1;
 }
 
 // 通行止めを置く位置
