@@ -328,6 +328,15 @@ const marker = L.marker(
 
 roadBlockMarkers.push(marker);
 
+blockedShelters.forEach(name => {
+
+const shelter = shelters.find(
+s => s.name === name
+);
+
+drawRoadBlock(home, shelter);
+
+});
 
 }
 
@@ -427,6 +436,23 @@ weight: 7
 ).addTo(map);
 
 roadBlocks.push(block);
+
+const icon = L.divIcon({
+className: "road-block-icon",
+html: "🚧",
+iconSize: [24,24],
+iconAnchor:[12,12]
+});
+
+
+const marker = L.marker(
+[blockLat, blockLng],
+{icon:icon}
+).addTo(map);
+
+
+roadBlockMarkers.push(marker);
+
 
 }
 
