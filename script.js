@@ -267,7 +267,9 @@ function restartGame(){
 life = 3;
 score = 0;
 gameStarted = false;
-dangerShelter = null;
+
+blockedShelters = [];
+nearestShelter = null;
 
 document.getElementById("life").textContent = life;
 document.getElementById("score").textContent = score;
