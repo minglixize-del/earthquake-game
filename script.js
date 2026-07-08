@@ -216,7 +216,7 @@ const px = -dy / length;
 const py = dx / length;
 
 // 赤線の長さ
-const size = 0.006;
+const size = 0.0015;
 
 // 赤線の両端
 const p1 = [
