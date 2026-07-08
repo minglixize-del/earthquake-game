@@ -225,16 +225,8 @@ const length = Math.sqrt(dx * dx + dy * dy);
 // 長さが0なら終了
 if(length === 0) return;
 
-// 家から何％の位置に置くか
-let ratio = 0.25;
-
-// 約100m（緯度経度の近似）
-const maxDistance = 0.0009;
-
-// 25%地点が100mより遠いなら100m地点にする
-if(length * ratio > maxDistance){
-ratio = maxDistance / length;
-}
+//家から40％地点に通行止めを置く
+const ratio = 0.4;
 
 // 通行止めを置く位置
 const blockLat = home.lat + dy * ratio;
