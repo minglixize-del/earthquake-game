@@ -18,9 +18,10 @@ let homeMarker = null;
 let life = 3;
 let score = 0;
 let gameStarted = false;
-let dangerShelter = null;
+
 let roadBlocks = [];
-let currentPattern = null;
+let blockedShelters = [];
+let nearestShelter = null;
 // -----------------------
 // 避難所
 // （あとで本物の座標に変更）
@@ -112,21 +113,48 @@ chooseShelter(shelter);
 // 家を置く
 // -----------------------
 
-map.on("click",function(e){
+map.on("click", function(e){
 
 if(homeMarker){
-
 map.removeLayer(homeMarker);
-
 }
 
-homeMarker=L.marker(e.latlng).addTo(map);
+homeMarker = L.marker(e.latlng).addTo(map);
 
 homeMarker.bindPopup("🏠 あなたの家").openPopup();
 
-document.getElementById("status").innerHTML="🏠 自宅を設定しました！";
+document.getElementById("status").innerHTML = "🏠 自宅を設定しました！";
 
-document.getElementById("earthquakeBtn").disabled=false;
+document.getElementById("earthquakeBtn").disabled = false;
+
+
+// ===== 一番近い避難所を探す =====
+
+let minDistance = Infinity;
+
+nearestShelter = null;
+
+shelters.forEach(function(shelter){
+
+const distance = Math.sqrt(
+
+Math.pow(e.latlng.lat - shelter.lat,2) +
+
+Math.pow(e.latlng.lng - shelter.lng,2)
+
+);
+
+if(distance < minDistance){
+
+minDistance = distance;
+
+nearestShelter = shelter;
+
+}
+
+});
+
+console.log("一番近い避難所:", nearestShelter.name);
 
 });
 
