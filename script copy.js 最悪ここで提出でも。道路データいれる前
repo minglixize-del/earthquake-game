@@ -3,30 +3,24 @@
 // 前半
 // =========================
 
-
 // 東御市中心
 const map = L.map('map').setView([36.359, 138.330], 13);
-
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 attribution:'© OpenStreetMap'
 }).addTo(map);
 
-
 // -----------------------
 // ゲームデータ
 // -----------------------
-
 
 let homeMarker = null;
 let life = 3;
 let score = 0;
 let gameStarted = false;
 
-
 let roadBlocks = [];
 let roadBlockMarkers = [];
-let roadLines = [];
 let blockedShelters = [];
 let nearestShelter = null;
 // -----------------------
@@ -34,9 +28,7 @@ let nearestShelter = null;
 // （あとで本物の座標に変更）
 // -----------------------
 
-
 const shelters = [
-
 
 {
 name:"田中小学校",
@@ -44,13 +36,11 @@ lat:36.360,
 lng:138.327
 },
 
-
 {
 name:"和小学校",
 lat:36.350,
 lng:138.340
 },
-
 
 {
 name:"東部中学校",
@@ -58,19 +48,15 @@ lat:36.366,
 lng:138.347
 },
 
-
 {
 name:"東御市ふれあい体育館",
 lat:36.324,
 lng:138.340
 }
 
-
 ];
 
-
 const roadPatterns = [
-
 
 {
 blockedShelter:"田中小学校",
@@ -80,7 +66,6 @@ lines:[
 ]
 },
 
-
 {
 blockedShelter:"東部中学校",
 lines:[
@@ -88,7 +73,6 @@ lines:[
 [[36.3545,138.3395],[36.3575,138.3425]]
 ]
 },
-
 
 {
 blockedShelter:"東御市ふれあい体育館",
@@ -98,130 +82,88 @@ lines:[
 ]
 }
 
-
 ];
-
 
 // -----------------------
 // 避難所を表示
 // -----------------------
 
-
 shelters.forEach(shelter=>{
-
 
 const marker=L.marker([shelter.lat,shelter.lng]).addTo(map);
 
-
 marker.bindPopup("🏫 "+shelter.name);
-
 
 marker.on("click",function(){
 
-
 if(!gameStarted){
-
 
 alert("まず地震を発生させてください！");
 
-
 return;
-
 
 }
 
-
 chooseShelter(shelter);
 
-
 });
 
-
 });
-
 
 // -----------------------
 // 家を置く
 // -----------------------
 
-
 map.on("click", function(e){
-
 
 if(homeMarker){
 map.removeLayer(homeMarker);
 }
 
-
 homeMarker = L.marker(e.latlng).addTo(map);
-
-
-loadRoadDate(home);
-
 
 homeMarker.bindPopup("🏠 あなたの家").openPopup();
 
-
 document.getElementById("status").innerHTML = "🏠 自宅を設定しました！";
-
 
 document.getElementById("earthquakeBtn").disabled = false;
 
 
-
-
 // ===== 一番近い避難所を探す =====
-
 
 let minDistance = Infinity;
 
-
 nearestShelter = null;
-
 
 shelters.forEach(function(shelter){
 
-
 const distance = Math.sqrt(
-
 
 Math.pow(e.latlng.lat - shelter.lat,2) +
 
-
 Math.pow(e.latlng.lng - shelter.lng,2)
-
 
 );
 
-
 if(distance < minDistance){
-
 
 minDistance = distance;
 
-
 nearestShelter = shelter;
-
 
 }
 
-
 });
-
 
 console.log("一番近い避難所:", nearestShelter.name);
 
-
 });
-
 
 // -----------------------
 // 地震発生
 // -----------------------
 
-
 function earthquake(){
-
 
 // 家が設定されているか確認
 if(homeMarker == null){
@@ -229,67 +171,52 @@ alert("先に自宅を設定してください！");
 return;
 }
 
-
 gameStarted = true;
-
 
 document.getElementById("message").innerHTML =
 "🚨 地震発生！<br><br>" +
 "道路の一部が通行止めになりました。<br><br>" +
 "地図を見て、安全な避難所を選んでください。";
 
-
 // 今までの通行止めを消す
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
 
-
 roadBlockMarkers.forEach(marker => map.removeLayer(marker));
 roadBlockMarkers = [];
 
-
 function drawRoadBlock(home, shelter){
-
 
 // 家→避難所の向き
 const dx = shelter.lng - home.lng;
 const dy = shelter.lat - home.lat;
 
-
 // 距離
 const length = Math.sqrt(dx * dx + dy * dy);
-
 
 // 長さが0なら終了
 if(length === 0) return;
 
-
 // 家から約150m地点に通行止めを置く
 const distanceFromHome = 0.015;
 
-
 let ratio = distanceFromHome / length;
-
 
 // 避難所より先には置かない
 if(ratio > 1){
 ratio = 1;
 }
 
-
 // 通行止めを置く位置
 const blockLat = home.lat + dy * ratio;
 const blockLng = home.lng + dx * ratio;
-
 
 // ルートと垂直方向のベクトル
 const px = -dy / length;
 const py = dx / length;
 
-
 // 赤線の長さ
 const size = 0.0015;
-
 
 // 赤線の両端
 const p1 = [
@@ -297,12 +224,10 @@ blockLat + py * size,
 blockLng + px * size
 ];
 
-
 const p2 = [
 blockLat - py * size,
 blockLng - px * size
 ];
-
 
 const block = L.polyline(
 [p1, p2],
@@ -312,9 +237,7 @@ weight: 7
 }
 ).addTo(map);
 
-
 roadBlocks.push(block);
-
 
 const icon = L.divIcon({
 className: "road-block-icon",
@@ -323,156 +246,72 @@ iconSize: [24, 24],
 iconAnchor: [12, 12]
 });
 
-
 const marker = L.marker(
 [blockLat, blockLng],
 { icon: icon }
 ).addTo(map);
 
-
 roadBlockMarkers.push(marker);
 
-
 }
-
-
-// -----------------------
-// 道路データ取得
-// -----------------------
-function loadRoadData(home){
-
-
-const radius = 500;
-
-
-const query = `
-[out:json];
-(
-way["highway"](around:${radius},${home.lat},${home.lng});
-);
-out geom;
-`;
-
-
-fetch(
-"https://overpass-api.de/api/interpreter",
-{
-method:"POST",
-body: query
-}
-)
-.then(response => response.json())
-.then(data => {
-
-
-data.elements.forEach(road => {
-
-
-if(!road.geometry) return;
-
-
-const points = road.geometry.map(point => [
-point.lat,
-point.lon
-]);
-
-
-const line = L.polyline(
-points,
-{
-color:"blue",
-weight:3
-}
-).addTo(map);
-
-
-roadLines.push(line);
-
-
-});
-
-
-});
-}
-
 
 // 通行止め避難所をリセット
 blockedShelters = [];
 
-
 // 一番近い避難所は必ず通行止め
 blockedShelters.push(nearestShelter.name);
-
 
 // 残り3つからランダムで1つ選ぶ
 const others = shelters.filter(
 shelter => shelter.name !== nearestShelter.name
 );
 
-
 const randomShelter =
 others[Math.floor(Math.random() * others.length)];
 
-
 blockedShelters.push(randomShelter.name);
-
 
 // 家の位置
 const home = homeMarker.getLatLng();
 
-
-loadRoadData(home);
 // 通行止めを描画
 blockedShelters.forEach(name => {
-
 
 const shelter = shelters.find(
 s => s.name === name
 );
 
-
 drawRoadBlock(home, shelter);
-
 
 });
 
-
 };
 
-
 function drawRoadBlock(home, shelter){
-
 
 // 家→避難所の向き
 const dx = shelter.lng - home.lng;
 const dy = shelter.lat - home.lat;
 
-
 // 距離
 const length = Math.sqrt(dx * dx + dy * dy);
-
 
 // 長さが0なら終了
 if(length === 0) return;
 
-
 //家から40％地点に通行止めを置く
 const ratio = 0.4;
-
 
 // 通行止めを置く位置
 const blockLat = home.lat + dy * ratio;
 const blockLng = home.lng + dx * ratio;
 
-
 // ルートと垂直方向のベクトル
 const px = -dy / length;
 const py = dx / length;
 
-
 // 赤線の長さ
 const size = 0.0006;
-
 
 // 赤線の両端
 const p1 = [
@@ -480,12 +319,10 @@ blockLat + py * size,
 blockLng + px * size
 ];
 
-
 const p2 = [
 blockLat - py * size,
 blockLng - px * size
 ];
-
 
 const block = L.polyline(
 [p1, p2],
@@ -495,56 +332,44 @@ weight: 7
 }
 ).addTo(map);
 
-
 roadBlocks.push(block);
 
-
 }
-
 
 // -----------------------
 // 避難所を選ぶ
 // -----------------------
 function chooseShelter(shelter){
 
-
 if(blockedShelters.includes(shelter.name)){
 
+    life--;
+    document.getElementById("life").textContent = life;
 
-   life--;
-   document.getElementById("life").textContent = life;
+    document.getElementById("message").innerHTML =
+    "❌ この避難経路は通行止めでした！<br><br>" +
+    "別の避難所を探してください。<br><br>" +
+    "ライフが1減りました。";
 
-
-   document.getElementById("message").innerHTML =
-   "❌ この避難経路は通行止めでした！<br><br>" +
-   "別の避難所を探してください。<br><br>" +
-   "ライフが1減りました。";
-
-
-       if(life <= 0){
-       alert("ゲームオーバー！");
-       restartGame();
-   }
-
+        if(life <= 0){
+        alert("ゲームオーバー！");
+        restartGame();
+    }
 
 } else {
 
+    score += 100;
+    document.getElementById("score").textContent = score;
 
-   score += 100;
-   document.getElementById("score").textContent = score;
+    document.getElementById("message").innerHTML =
+    "🎉 避難成功！<br><br>" +
+    shelter.name +
+    "へ安全に避難できました！<br><br>" +
+    "💡 防災アドバイス：災害時は最寄りではなく、道路状況も確認して避難しましょう。";
 
-
-   document.getElementById("message").innerHTML =
-   "🎉 避難成功！<br><br>" +
-   shelter.name +
-   "へ安全に避難できました！<br><br>" +
-   "💡 防災アドバイス：災害時は最寄りではなく、道路状況も確認して避難しましょう。";
-
-
-   gameStarted = false;
+    gameStarted = false;
 }
 }
-
 
 // -----------------------
 // AIおすすめ避難所
@@ -552,7 +377,6 @@ if(blockedShelters.includes(shelter.name)){
 function recommendShelter(){
 let candidates = shelters.filter(s => s.name !== dangerShelter.name);
 let recommendation = candidates[0];
-
 
 document.getElementById("message").innerHTML +=
 "<hr>" +
@@ -564,7 +388,6 @@ recommendation.name +
 "・安全に避難できる可能性が高いです。";
 }
 
-
 // -----------------------
 // リスタート
 // -----------------------
@@ -573,10 +396,8 @@ life = 3;
 score = 0;
 gameStarted = false;
 
-
 blockedShelters = [];
 nearestShelter = null;
-
 
 document.getElementById("life").textContent = life;
 document.getElementById("score").textContent = score;
@@ -584,21 +405,15 @@ document.getElementById("message").innerHTML = "";
 document.getElementById("status").innerHTML = "📍 地図をクリックして、自宅を設定してください。";
 document.getElementById("earthquakeBtn").disabled = true;
 
-
 roadBlocks.forEach(block => map.removeLayer(block));
 roadBlocks = [];
 
-
 roadBlockMarkers.forEach(marker => map.removeLayer(marker));
 roadBlockMarkers = [];
-
 
 if(homeMarker){
 map.removeLayer(homeMarker);
 homeMarker = null;
 }
 }
-
-
-
 
