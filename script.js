@@ -171,11 +171,14 @@ roadBlocks.push(block);
 // -----------------------
 function chooseShelter(shelter){
 
-if(shelter.name === dangerShelter.name){
+if(shelter.name === currentPattern.blockedShelter){
+
 life--;
 document.getElementById("life").textContent = life;
+
 document.getElementById("message").innerHTML =
-"❌ " + shelter.name + "へ向かう道路は通行止めでした！<br><br>" +
+"❌ この避難経路は通行止めでした！<br><br>" +
+"別の避難所を探してください。<br><br>" +
 "ライフが1減りました。";
 
 if(life <= 0){
@@ -184,13 +187,15 @@ restartGame();
 }
 
 } else {
+
 score += 100;
 document.getElementById("score").textContent = score;
+
 document.getElementById("message").innerHTML =
 "🎉 避難成功！<br><br>" +
 shelter.name +
 "へ安全に避難できました！<br><br>" +
-"💡 防災アドバイス：災害時は最寄りではなく、安全な避難所を選ぶことも大切です。";
+"💡 防災アドバイス：災害時は最寄りではなく、道路状況も確認して避難しましょう。";
 
 gameStarted = false;
 }
